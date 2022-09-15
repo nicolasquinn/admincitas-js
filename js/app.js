@@ -26,15 +26,23 @@ function eventListeners() {
 }
 
 class Citas {
+
     constructor () {
-        this.citas = [];
+        this.citas = []
     }
+
+    agregarCita(cita) {
+        this.citas = [...this.citas, cita];
+        console.log(this.citas);
+    }
+
 }
 
 class UI {
 
     mostrarAlerta(msj, tipo) {
 
+        // Crear e insertar alerta al validar formulario
         const divAlerta = document.createElement('DIV');
         divAlerta.textContent = msj;
         divAlerta.classList.add('text-center', 'alert', 'd-block', 'col-12');
@@ -55,6 +63,7 @@ class UI {
 
 }
 
+// Instanciamiento
 const adminCitas = new Citas();
 const ui = new UI();
 
@@ -82,9 +91,26 @@ function nuevaCita(e) {
 
     // destruct. de citaObj y validación
     const { mascota, propietario, telefono, fecha, hora, sintomas } = citaObj;
-    if( mascota === '' || propietario === '' || telefono === '' || fecha === '' || hora === '' || sintomas === '' ) {
+    if ( mascota === '' || propietario === '' || telefono === '' || fecha === '' || hora === '' || sintomas === '' ) {
         ui.mostrarAlerta('Todos los campos son obligatorios', 'error');
         return;
     }
 
+    // generar ID y agrego el objeto al arreglo, reinicio objeto y form.
+    citaObj.id = Date.now();
+    adminCitas.agregarCita({ ...citaObj });
+    reiniciarObjeto();
+    formulario.reset();
+
+
+}
+
+// Reiniciar el citaObj tras haber creado una cita.
+function reiniciarObjeto () {
+    citaObj.mascota = '';
+    citaObj.propietario = '';
+    citaObj.telefono = '';
+    citaObj.fecha = '';
+    citaObj.hora = '';
+    citaObj.sintomas = '';
 }
