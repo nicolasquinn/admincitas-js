@@ -33,7 +33,6 @@ class Citas {
 
     agregarCita(cita) {
         this.citas = [...this.citas, cita];
-        console.log(this.citas);
     }
 
 }
@@ -61,6 +60,68 @@ class UI {
 
     }
 
+    mostrarCitas({ citas }) {
+
+        this.limpiarHTML();
+
+        citas.forEach( item => {
+
+            const { mascota, propietario, telefono, fecha, hora, sintomas, id } = item;
+
+            const divCita = document.createElement('DIV');
+            divCita.classList.add('cita', 'p-3');
+            divCita.dataset.id = id;
+
+            // Scripting de los elementos
+            const mascotaParrafo = document.createElement('H2');
+            mascotaParrafo.classList.add('card-title', 'font-weight-bolder');
+            mascotaParrafo.textContent = mascota;
+
+            const propietarioParrafo = document.createElement('P');
+            propietarioParrafo.innerHTML = `
+            <span class="font-weight-bolder">Propietario:</span> ${propietario}
+            `;
+
+            const telefonoParrafo = document.createElement('P');
+            telefonoParrafo.innerHTML = `
+            <span class="font-weight-bolder">Teléfono:</span> ${telefono}
+            `;
+
+            const fechaParrafo = document.createElement('P');
+            fechaParrafo.innerHTML = `
+            <span class="font-weight-bolder">Fecha:</span> ${fecha}
+            `;
+
+            const horaParrafo = document.createElement('P');
+            horaParrafo.innerHTML = `
+            <span class="font-weight-bolder">Hora:</span> ${hora}
+            `;
+
+            const sintomasParrafo = document.createElement('P');
+            sintomasParrafo.innerHTML = `
+            <span class="font-weight-bolder">Síntomas:</span> ${sintomas}
+            `;
+
+            // Agregar los elementos de scripting al divCita e insertar en el HTML
+            divCita.appendChild(mascotaParrafo);
+            divCita.appendChild(propietarioParrafo);
+            divCita.appendChild(telefonoParrafo);
+            divCita.appendChild(fechaParrafo);
+            divCita.appendChild(horaParrafo);
+            divCita.appendChild(sintomasParrafo);
+            contenedorCitas.appendChild(divCita);
+
+        })
+
+    }
+
+    limpiarHTML () {
+        while (contenedorCitas.firstChild) {
+            contenedorCitas.removeChild(contenedorCitas.firstChild);
+        }
+    }
+
+
 }
 
 // Instanciamiento
@@ -82,7 +143,6 @@ const citaObj = {
 // Agrega datos al obj. de cita
 function datosCita (e) {
     citaObj[e.target.name] = e.target.value;
-    console.log(citaObj)
 }
 
 // Validar y agregar citas a la class Citas
@@ -102,6 +162,8 @@ function nuevaCita(e) {
     reiniciarObjeto();
     formulario.reset();
 
+    // inserto en el HTML.
+    ui.mostrarCitas(adminCitas);
 
 }
 
