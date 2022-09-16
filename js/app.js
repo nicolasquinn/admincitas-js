@@ -16,6 +16,12 @@ let editando;
 eventListeners();
 function eventListeners() {
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const guardado = JSON.parse(localStorage.getItem('citas'));
+        adminCitas.cargarCitas(guardado);
+        ui.mostrarCitas(guardado);
+    })
+
     inputMascota.addEventListener('input', datosCita);
     inputPropietario.addEventListener('input', datosCita);
     inputTelefono.addEventListener('input', datosCita);
@@ -30,7 +36,7 @@ function eventListeners() {
 class Citas {
 
     constructor () {
-        this.citas = []
+        this.citas = [];
     }
 
     agregarCita(cita) {
@@ -43,6 +49,10 @@ class Citas {
 
     editarCita(citaAct) {
         this.citas = this.citas.map( (cita) => cita.id === citaAct.id ? citaAct : cita);
+    }
+
+    cargarCitas({citas}) {
+        this.citas = citas;
     }
 
 }
@@ -203,6 +213,8 @@ function nuevaCita(e) {
     formulario.reset();
     // inserto en el HTML.
     ui.mostrarCitas(adminCitas);
+    // Guardo en el LocalStorage
+    sincStorage(adminCitas);
 
 }
 
@@ -221,6 +233,7 @@ function eliminarCita(id) {
     adminCitas.eliminarCita(id);
     ui.mostrarAlerta('Cita eliminada exitosamente');
     ui.mostrarCitas(adminCitas);
+    sincStorage(adminCitas);
 }
 
 // Carga los datos y modo edición
@@ -249,4 +262,8 @@ function cargarEdicion(cita) {
 
     editando = true;
 
+}
+
+function sincStorage(misCitas) {
+    localStorage.setItem('citas', JSON.stringify(misCitas));
 }
