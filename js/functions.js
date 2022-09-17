@@ -59,7 +59,7 @@ export function nuevaCita(e) {
             formulario.querySelector('button[type="submit"]').textContent = 'Crear cita';
             editando = false;
         }
-
+        
     } else {
         // Modo nueva cita creo ID único agrego al array de citas.
         citaObj.id = Date.now();
@@ -99,9 +99,15 @@ export function reiniciarObjeto () {
 
 // Elimina cita del array como en la UI
 export function eliminarCita(id) {
-    adminCitas.eliminarCita(id);
-    ui.mostrarAlerta('Cita eliminada exitosamente');
-    ui.mostrarCitas();
+    // Eliminar de la DB
+    const transaction = DB.transaction(['citas'], 'readwrite');
+    const objectStore = transaction.objectStore('citas');
+    objectStore.delete(id);
+    transaction.oncomplete = function () {
+        // Muestro en el UI
+        ui.mostrarAlerta('Cita eliminada exitosamente');
+        ui.mostrarCitas();
+    }
 }
 
 // Carga los datos y modo edición
