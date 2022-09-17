@@ -47,9 +47,19 @@ export function nuevaCita(e) {
     if (editando) {
         // Modo edición
         adminCitas.editarCita({...citaObj});
-        ui.mostrarAlerta('Cita editada exitosamente.');
-        formulario.querySelector('button[type="submit"]').textContent = 'Crear cita';
-        editando = false;
+
+        // Edito la información en la DB
+        const transaction = DB.transaction(['citas'], 'readwrite');
+        const objectStore = transaction.objectStore('citas');
+        objectStore.put(citaObj);
+
+        // Si se completa la edición en la DB
+        transaction.oncomplete = function () {
+            ui.mostrarAlerta('Cita editada exitosamente.');
+            formulario.querySelector('button[type="submit"]').textContent = 'Crear cita';
+            editando = false;
+        }
+
     } else {
         // Modo nueva cita creo ID único agrego al array de citas.
         citaObj.id = Date.now();
