@@ -72,7 +72,7 @@ export function nuevaCita(e) {
     reiniciarObjeto();
     formulario.reset();
     // inserto en el HTML.
-    ui.mostrarCitas(adminCitas);
+    ui.mostrarCitas();
     // Guardo en el LocalStorage
 
 }
@@ -91,7 +91,7 @@ export function reiniciarObjeto () {
 export function eliminarCita(id) {
     adminCitas.eliminarCita(id);
     ui.mostrarAlerta('Cita eliminada exitosamente');
-    ui.mostrarCitas(adminCitas);
+    ui.mostrarCitas();
 }
 
 // Carga los datos y modo edición
@@ -136,6 +136,8 @@ function crearDB () {
     crearDB.onsuccess = () => {
         console.log('Base de datos cargada correctamente.')
         DB = crearDB.result;
+        // Muestro las citas existenes en el HTML
+        ui.mostrarCitas();
     }
 
     crearDB.onupgradeneeded = (e) => {
