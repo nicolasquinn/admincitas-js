@@ -54,7 +54,18 @@ export function nuevaCita(e) {
         // Modo nueva cita creo ID único agrego al array de citas.
         citaObj.id = Date.now();
         adminCitas.agregarCita({ ...citaObj });
-        ui.mostrarAlerta('Cita agregada exitosamente.')
+
+        // Insertar la cita en la DB
+        const transaction = DB.transaction(['citas'], 'readwrite');
+        const objectStore = transaction.objectStore('citas')
+        objectStore.add(citaObj)
+
+        transaction.oncomplete = function () {
+            console.log("Transacción exitosa, objeto insertado.")
+            // Muestro mensaje en la UI.
+            ui.mostrarAlerta('Cita agregada exitosamente.')
+        }
+
     }
 
     // Reinicio form y objCitas.
@@ -125,11 +136,11 @@ function crearDB () {
     crearDB.onsuccess = () => {
         console.log('Base de datos cargada correctamente.')
         DB = crearDB.result;
-        console.log(DB);
     }
 
     crearDB.onupgradeneeded = (e) => {
         const db = e.target.result;
+        
         const objectStore = db.createObjectStore('citas', {
             keyPath: 'id',
             autoIncrement: true
