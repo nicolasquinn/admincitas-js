@@ -3,6 +3,14 @@ import UI from './classes/UI.js';
 
 import { inputMascota, inputFecha, inputHora, inputPropietario, inputSintomas, inputTelefono, formulario } from './selectors.js';
 
+// Crear base de datos
+export let DB;
+export function baseDatos () {
+    window.onload = () => {
+        crearDB();
+    }
+}
+
 // Instanciamiento
 export const adminCitas = new Citas();
 export const ui = new UI();
@@ -100,5 +108,43 @@ export function cargarEdicion(cita) {
     formulario.querySelector('button[type="submit"]').textContent = 'Editar y guardar cambios';
 
     editando = true;
+
+}
+
+function crearDB () {
+
+    // Creo la DB versión 1.0
+    const crearDB = window.indexedDB.open('citas', 1);
+
+    // Si hay un error
+    crearDB.onerror = () => {
+        console.log('Error al crear la base de datos.');
+    }
+
+    // Si se carga
+    crearDB.onsuccess = () => {
+        console.log('Base de datos cargada correctamente.')
+        DB = crearDB.result;
+        console.log(DB);
+    }
+
+    crearDB.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        const objectStore = db.createObjectStore('citas', {
+            keyPath: 'id',
+            autoIncrement: true
+        })
+
+        // Defino las columnas
+        objectStore.createIndex('mascota', 'mascota', { unique: false });
+        objectStore.createIndex('propietario', 'propietario', { unique: false });
+        objectStore.createIndex('telefono', 'telefono', { unique: false });
+        objectStore.createIndex('fecha', 'fecha', { unique: false });
+        objectStore.createIndex('hora', 'hora', { unique: false });
+        objectStore.createIndex('sintomas', 'sintomas', { unique: false });
+        objectStore.createIndex('id', 'id', { unique: true });
+
+        console.log("DB Creada.")
+    }
 
 }
